@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { tokenBlacklist } = require("../routes/authroute");
 
 module.exports = (req, res, next) => {
   // Extract the token from the Authorization header
@@ -12,6 +13,11 @@ module.exports = (req, res, next) => {
   try {
     // Remove "Bearer " prefix from token if it exists
     const actualToken = token.startsWith("Bearer ") ? token.slice(7) : token;
+
+    // Check if token is blacklisted
+    if (tokenBlacklist.has(actualToken)) {
+      return res.status(401).json({ message: "Token has been revoked" });
+    }
 
     // Verify the token using the secret key
     const decoded = jwt.verify(actualToken, process.env.JWT_TOKEN);

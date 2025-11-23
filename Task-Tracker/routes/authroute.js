@@ -5,6 +5,9 @@ const express = require('express');
 
 const router = express.Router();
 
+// Token blacklist (consider using Redis in production)
+const tokenBlacklist = new Set();
+
 // Register Route
 router.post("/register", async (req, res) => {
     const { username, password } = req.body;
@@ -56,4 +59,29 @@ router.post("/login", async (req, res) => {
     }
 });
 
+router.post("/logout", (req, res) => {
+    try {
+        // Extract the token from the Authorization header
+        const token = req.header("Authorization");
+        
+        if (!token) {
+            return res.status(400).json({ message: "No token provided" });
+        }
+
+        // Remove "Bearer " prefix if it exists
+        const actualToken = token.startsWith("Bearer ") ? token.slice(7) : token;
+
+        // Verify the token is valid before blacklisting
+        jwt.verify(actualToken, process.env.JWT_TOKEN);
+
+        // Add token to blacklist
+        tokenBlacklist.add(actualToken);
+
+        res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+        res.status(400).json({ message: "Invalid token" });
+    }
+});
+
 module.exports = router;
+module.exports.tokenBlacklist = tokenBlacklist;
