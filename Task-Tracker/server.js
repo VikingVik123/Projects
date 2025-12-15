@@ -9,7 +9,13 @@ const { specs, swaggerUi } = require('./swagger');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Enhanced CORS configuration for Swagger UI
+app.use(cors({
+  origin: '*', // Allow all origins for development
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  credentials: true
+}));
 app.use(bodyParser.json());
 app.use(express.json());
 

@@ -1,6 +1,15 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
+// Dynamically determine server URL
+const getServerUrl = () => {
+  if (process.env.API_URL) {
+    return process.env.API_URL;
+  }
+  const port = process.env.PORT || 5000;
+  return `http://localhost:${port}`;
+};
+
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -14,8 +23,8 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:5000',
-        description: 'Development server',
+        url: getServerUrl(),
+        description: 'API Server',
       },
     ],
     components: {
