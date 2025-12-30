@@ -1,0 +1,27 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --bg-color: #ffffff;
+  --text-color: #213547;
+  --border-color: #ccc;
+  --container-bg: #ffffff;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --input-bg: #ffffff;
+  --button-hover: #f0f0f0;
+}
+
+body.dark-theme {
+  --bg-color: #1a1a1a;
+  --text-color: #e0e0e0;
+  --border-color: #444;
+  --container-bg: #2d2d2d;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --input-bg: #3a3a3a;
+  --button-hover: #404040;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
