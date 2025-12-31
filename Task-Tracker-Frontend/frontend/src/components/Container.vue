@@ -62,10 +62,10 @@ const handleTaskAdded = () => {
 
 @media (max-width: 480px) {
     .container {
-        width: calc(100% - 1em);
+        width: calc(100% - 2em);
         padding: 1em;
         gap: 0.75em;
-        margin: 1em 0.5em;
+        margin: 1em auto;
     }
 
     .input-row {

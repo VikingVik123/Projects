@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import Header from '../components/Header.vue';
 import Container from '../components/Container.vue';
 import InfoBox from '../components/InfoBox.vue';
+import Footer from '../components/Footer.vue';
 import { logout } from '../services/auth.js';
 
 const router = useRouter();
@@ -39,16 +40,6 @@ const handleLogout = async () => {
 
 <template>
   <div class="dashboard">
-    <div class="logout-container">
-      <button 
-        class="logout-btn" 
-        @click="handleLogout" 
-        :disabled="isLoading"
-      >
-        {{ isLoading ? 'Logging out...' : 'Logout' }}
-      </button>
-    </div>
-
     <div v-if="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
@@ -56,6 +47,7 @@ const handleLogout = async () => {
     <Header />
     <Container />
     <InfoBox />
+    <Footer @logout="handleLogout" :disabled="isLoading" />
   </div>
 </template>
 
@@ -64,41 +56,7 @@ const handleLogout = async () => {
   position: relative;
   min-height: 100vh;
   padding-top: 0.5em;
-}
-
-.logout-container {
-  position: fixed;
-  top: 1em;
-  left: 1em;
-  z-index: 1000;
-}
-
-.logout-btn {
-  padding: 0.6em 1.2em;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background-color: var(--container-bg);
-  color: var(--text-color);
-  cursor: pointer;
-  font-size: 0.9em;
-  font-family: inherit;
-  transition: all 0.3s;
-  box-shadow: 0 2px 4px var(--shadow);
-  min-height: 44px;
-  min-width: 80px;
-}
-
-.logout-btn:hover:not(:disabled) {
-  background-color: #87CEEB;
-  color: white;
-  border-color: #87CEEB;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(135, 206, 235, 0.3);
-}
-
-.logout-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  padding-bottom: 1em;
 }
 
 .error-message {
@@ -123,32 +81,11 @@ const handleLogout = async () => {
   .dashboard {
     padding-top: 1em;
   }
-
-  .logout-container {
-    top: 0.75em;
-    left: 0.75em;
-  }
-
-  .logout-btn {
-    padding: 0.5em 1em;
-    font-size: 0.85em;
-  }
 }
 
 @media (max-width: 480px) {
   .dashboard {
-    padding-top: 1.5em;
-  }
-
-  .logout-container {
-    top: 0.5em;
-    left: 0.5em;
-  }
-
-  .logout-btn {
-    padding: 0.5em 0.9em;
-    font-size: 0.8em;
-    min-width: 70px;
+    padding-top: 1em;
   }
 
   .error-message {

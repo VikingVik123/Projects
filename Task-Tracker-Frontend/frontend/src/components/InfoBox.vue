@@ -489,10 +489,10 @@ onBeforeUnmount(() => {
 
 @media (max-width: 480px) {
   .button-group {
-    width: calc(100% - 1em);
-    padding: 0 0.5em;
+    width: calc(100% - 2em);
+    padding: 0 1em;
     gap: 0.4em;
-    margin: 1em 0.5em 0;
+    margin: 1em auto 0;
   }
 
   .button-group button {
@@ -502,10 +502,10 @@ onBeforeUnmount(() => {
   }
 
   .info-box {
-    width: calc(100% - 1em);
+    width: calc(100% - 2em);
     padding: 1em;
     min-height: 150px;
-    margin: 0 0.5em 1em;
+    margin: 0 auto 1em;
   }
 
   .task-header {
