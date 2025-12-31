@@ -1,54 +1,84 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { login } from '../services/auth.js';
+import { register } from '../services/auth.js';
 
 const router = useRouter();
 
 const form = ref({
   username: '',
-  password: ''
+  password: '',
+  confirmPassword: ''
 });
 
 const errorMessage = ref('');
+const successMessage = ref('');
 const isLoading = ref(false);
 
-const handleLogin = async () => {
+const handleRegister = async () => {
     errorMessage.value = '';
+    successMessage.value = '';
+    
+    // Validate passwords match
+    if (form.value.password !== form.value.confirmPassword) {
+        errorMessage.value = 'Passwords do not match';
+        return;
+    }
+    
+    // Validate password length
+    if (form.value.password.length < 6) {
+        errorMessage.value = 'Password must be at least 6 characters';
+        return;
+    }
+    
     isLoading.value = true;
     
     try {
-        const response = await login({
+        const response = await register({
             username: form.value.username,
             password: form.value.password
         });
         
-        // Store the token if provided
-        if (response.token) {
-            localStorage.setItem('authToken', response.token);
-        }
+        successMessage.value = response.message || 'Registration successful! Redirecting to login...';
         
-        // Redirect to dashboard
-        router.push('/');
+        // Redirect to login after 2 seconds
+        setTimeout(() => {
+            router.push('/login');
+        }, 2000);
     } catch (error) {
-        errorMessage.value = error.response?.data?.message || error.message || 'Login failed. Please try again.';
+        console.error('Registration error:', error.response?.data);
+        if (error.response?.data?.message) {
+            errorMessage.value = error.response.data.message;
+        } else if (error.response?.data?.error) {
+            errorMessage.value = error.response.data.error;
+        } else if (error.message) {
+            errorMessage.value = error.message;
+        } else {
+            errorMessage.value = 'Registration failed. Please try again.';
+        }
     } finally {
         isLoading.value = false;
     }
 };
 
-const goToRegister = () => {
-    router.push('/register');
+const goToLogin = () => {
+    router.push('/login');
 };
-
 </script>
+
 <template>
-  <div class="login-page">
-    <h1>Login</h1>
+  <div class="register-page">
+    <h1>Register</h1>
+    
     <div v-if="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
-    <form @submit.prevent="handleLogin">
+    
+    <div v-if="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
+    
+    <form @submit.prevent="handleRegister">
       <div class="form-group">
         <label for="username">Username:</label>
         <input 
@@ -57,8 +87,10 @@ const goToRegister = () => {
           type="text" 
           required 
           :disabled="isLoading"
+          placeholder="Enter username"
         />
       </div>
+      
       <div class="form-group">
         <label for="password">Password:</label>
         <input 
@@ -67,21 +99,36 @@ const goToRegister = () => {
           type="password" 
           required 
           :disabled="isLoading"
+          placeholder="At least 6 characters"
         />
       </div>
+      
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password:</label>
+        <input 
+          id="confirmPassword" 
+          v-model="form.confirmPassword" 
+          type="password" 
+          required 
+          :disabled="isLoading"
+          placeholder="Re-enter password"
+        />
+      </div>
+      
       <button type="submit" :disabled="isLoading">
-        {{ isLoading ? 'Logging in...' : 'Login' }}
+        {{ isLoading ? 'Registering...' : 'Register' }}
       </button>
     </form>
     
-    <div class="register-link">
-      Don't have an account? 
-      <a @click.prevent="goToRegister" href="#">Register here</a>
+    <div class="login-link">
+      Already have an account? 
+      <a @click.prevent="goToLogin" href="#">Login here</a>
     </div>
   </div>
 </template>
+
 <style scoped>
-.login-page {
+.register-page {
   max-width: 400px;
   margin: 50px auto;
   padding: 30px;
@@ -92,7 +139,7 @@ const goToRegister = () => {
   transition: all 0.3s;
 }
 
-.login-page h1 {
+.register-page h1 {
   text-align: center;
   margin-bottom: 20px;
   color: var(--text-color);
@@ -110,12 +157,30 @@ const goToRegister = () => {
   border-radius: 4px;
   color: #c33;
   font-size: 14px;
+  text-align: center;
 }
 
 :global(body.dark-theme) .error-message {
-  background-color: #4a2626;
-  border-color: #8b3a3a;
-  color: #ff8080;
+  background-color: #3a3a3a;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+.success-message {
+  padding: 10px;
+  margin-bottom: 15px;
+  background-color: #e8f5e9;
+  border: 1px solid #81c784;
+  border-radius: 4px;
+  color: #2e7d32;
+  font-size: 14px;
+  text-align: center;
+}
+
+:global(body.dark-theme) .success-message {
+  background-color: #1b5e20;
+  border-color: #4caf50;
+  color: #a5d6a7;
 }
 
 .form-group {
@@ -178,26 +243,26 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.register-link {
+.login-link {
   margin-top: 20px;
   text-align: center;
   color: var(--text-color);
   font-size: 14px;
 }
 
-.register-link a {
+.login-link a {
   color: #87CEEB;
   text-decoration: none;
   font-weight: 500;
   cursor: pointer;
 }
 
-.register-link a:hover {
+.login-link a:hover {
   text-decoration: underline;
 }
 
 @media (max-width: 768px) {
-  .login-page {
+  .register-page {
     max-width: 90%;
     margin: 30px auto;
     padding: 25px;
@@ -205,13 +270,13 @@ button:disabled {
 }
 
 @media (max-width: 480px) {
-  .login-page {
+  .register-page {
     max-width: calc(100% - 1em);
     margin: 20px 0.5em;
     padding: 20px;
   }
 
-  .login-page h1 {
+  .register-page h1 {
     font-size: 1.8em;
     margin-bottom: 15px;
   }

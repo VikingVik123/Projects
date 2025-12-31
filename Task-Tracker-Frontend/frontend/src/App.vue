@@ -1,10 +1,6 @@
 <script setup>
 import { onMounted } from 'vue';
-import Container from './components/Container.vue';
-import Header from './components/Header.vue';
-import InfoBox from './components/InfoBox.vue';
 import ThemeToggle from './components/ThemeToggle.vue';
-import LoginPage from './views/LoginPage.vue';
 
 const handleThemeToggle = (isDark) => {
   if (isDark) {
@@ -25,10 +21,8 @@ onMounted(() => {
 </script>
 
 <template>
-
   <ThemeToggle @toggle-theme="handleThemeToggle" />
-
-  <LoginPage />
+  <router-view />
 </template>
 
 <style scoped>

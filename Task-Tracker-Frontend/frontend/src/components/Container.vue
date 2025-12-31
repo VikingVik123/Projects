@@ -1,19 +1,35 @@
 <script setup>
+import { ref } from 'vue';
 import AddButton from './AddButton.vue';
 import InputBox from './InputBox.vue';
+
+const inputBoxRef = ref(null);
+
+const handleAddTask = () => {
+  if (inputBoxRef.value) {
+    inputBoxRef.value.addTask();
+  }
+};
+
+const handleTaskAdded = () => {
+  // Emit event to parent or refresh tasks
+  window.dispatchEvent(new CustomEvent('task-added'));
+};
 </script>
 
 <template>
     <div class="container">
-        <InputBox />
-        <AddButton />
+        <div class="input-row">
+          <InputBox ref="inputBoxRef" @task-added="handleTaskAdded" />
+          <AddButton @add-task="handleAddTask" />
+        </div>
     </div>
 </template>
 
 <style scoped>
 .container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 1em;
     width: 90%;
     max-width: 1200px;
@@ -25,20 +41,36 @@ import InputBox from './InputBox.vue';
     transition: background-color 0.3s, box-shadow 0.3s;
 }
 
+.input-row {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+
 @media (max-width: 768px) {
     .container {
-        width: 95%;
-        padding: 1em;
-        gap: 0.75em;
+        width: 92%;
+        padding: 1.2em;
+        gap: 0.8em;
+        margin: 1.5em auto;
+    }
+
+    .input-row {
+      gap: 0.8em;
     }
 }
 
 @media (max-width: 480px) {
     .container {
-        width: 98%;
-        padding: 0.75em;
-        flex-direction: column;
-        gap: 0.5em;
+        width: calc(100% - 1em);
+        padding: 1em;
+        gap: 0.75em;
+        margin: 1em 0.5em;
+    }
+
+    .input-row {
+      flex-direction: column;
+      gap: 0.75em;
     }
 }
 </style>

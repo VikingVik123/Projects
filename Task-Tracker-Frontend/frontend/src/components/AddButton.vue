@@ -1,8 +1,13 @@
 <script setup>
+const emit = defineEmits(['add-task']);
+
+const handleClick = () => {
+  emit('add-task');
+};
 </script>
 
 <template>
-  <button>+ Add</button>
+  <button @click="handleClick">+ Add</button>
 </template>
 
 <style scoped>
@@ -16,14 +21,23 @@ button {
   background-color: #87CEEB;
   color: white;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: border-color 0.25s;
+  white-space: nowrap;
+  min-height: 44px;
 }
 button:hover {
   border-color: #646cff;
-  opacity: 0.9;
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (max-width: 480px) {
+  button {
+    width: 100%;
+    padding: 0.7em 1em;
+    font-size: 0.95em;
+  }
 }
 </style>

@@ -11,8 +11,8 @@ export const register = async (payload) => {
 };
 
 export const logout = async () => {
-  localStorage.removeItem('authToken');
   const response = await api.post('/api/auth/logout');
+  localStorage.removeItem('authToken');
   return response.data;
 };
 
